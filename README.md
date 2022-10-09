@@ -1,4 +1,4 @@
-# IEBN: A Novel Incremental Model for Enhancing Fairness in Facial Expression Recognition
+# IEBN
 A PyTorch implementation of the [IEBN].
 
 ##requirements
@@ -6,10 +6,10 @@ certifi==2021.10.8
 colorama==0.4.4
 joblib==1.1.0
 mkl-fft==1.3.1
-mkl-random @ file:///C:/ci/mkl_random_1626186184278/work
+mkl-random
 mkl-service==2.4.0
 numpy==1.22.0
-olefile @ file:///Users/ktietz/demo/mc3/conda-bld/olefile_1629805411829/work
+olefile 
 opencv-python==4.5.5.62
 pandas==1.3.5
 Pillow==9.0.0
@@ -17,7 +17,7 @@ python-dateutil==2.8.2
 pytz==2021.3
 scikit-learn==1.0.2
 scipy==1.7.3
-six @ file:///tmp/build/80754af9/six_1623709665295/work
+six 
 sklearn==0.0
 threadpoolctl==3.0.0
 torch==1.10.1
