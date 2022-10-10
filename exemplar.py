@@ -27,7 +27,7 @@ class Exemplar:
     
     def update(self, images_train,labels_train,itera):
         self.novel_cls = (len(self.order[itera]))
-        # reduce old memory
+
         if itera == 1:
             self.memory_size = self.memory_size//2
         elif itera == 2:
@@ -37,7 +37,6 @@ class Exemplar:
             self.train_images = self.train_images[:, :self.memory_size]
             self.train_label  = self.train_label[:, :self.memory_size]
         
-        # add new memory
         memory_new_images = np.zeros((self.novel_cls, self.memory_size, 3, 224, 224))
         memory_new_labels = np.zeros((self.novel_cls, self.memory_size), dtype=int)
         memory_new_images = torch.tensor(memory_new_images)
@@ -54,7 +53,6 @@ class Exemplar:
             #memory_new_labels[k] = torch.tile(self.order[k], (self.memory_size))
             memory_new_labels[k] = tar
 
-        # herding
         if itera > 0:
             self.train_images = torch.cat((self.train_images, memory_new_images),dim=1)
             self.train_label  = torch.cat((self.train_label, memory_new_labels),dim=1)
@@ -68,84 +66,45 @@ class Exemplar:
 
         return exemplar_train_x, exemplar_train_y
 
-class ExemplarsSelector:
-    """具有数据集接口的方法的Exemplar选择"""
-
-    def __init__(self, exemplars_dataset: data.Dataset):
-        self.exemplars_dataset = exemplars_dataset
-
-    def __call__(self, model: IEBN, trn_loader: DataLoader, transform):
-        clock0 = time.time()
-        exemplars_per_class = self._exemplars_per_class_num(model)
-        with transform(trn_loader.dataset, transform) as ds_for_selection:
-            # change loader and fix to go sequentially (shuffle=False), keeps same order for later, eval transforms
-            sel_loader = DataLoader(ds_for_selection, batch_size=trn_loader.batch_size, shuffle=False,
-                                    num_workers=trn_loader.num_workers, pin_memory=trn_loader.pin_memory)
-            selected_indices = self._select_indices(model, sel_loader, exemplars_per_class, transform)
-        with transform(trn_loader.dataset, Lambda(lambda x: np.array(x))) as ds_for_raw:
-            x, y = zip(*(ds_for_raw[idx] for idx in selected_indices))
-        clock1 = time.time()
-        print('| Selected {:d} train exemplars, time={:5.1f}s'.format(len(x), clock1 - clock0))
-        return x, y
-
-    def _exemplars_per_class_num(self, model: IEBN):
-        if self.exemplars_dataset.max_num_exemplars_per_class:
-            return self.exemplars_dataset.max_num_exemplars_per_class
-
-        num_cls = model.task_cls.sum().item()
-        num_exemplars = self.exemplars_dataset.max_num_exemplars
-        exemplars_per_class = int(np.ceil(num_exemplars / num_cls))
-        assert exemplars_per_class > 0, \
-            "Not enough exemplars to cover all classes!\n" \
-            "Number of classes so far: {}. " \
-            "Limit of exemplars: {}".format(num_cls,
-                                            num_exemplars)
-        return exemplars_per_class
-
-    def _select_indices(self, model: IEBN, sel_loader: DataLoader, exemplars_per_class: int, transform) -> Iterable:
-        pass
-
-class HerdingExemplarsSelector(data.Dataset):
-
+class Herding(data.Dataset):
     def __init__(self, exemplars_dataset):
         super().__init__(exemplars_dataset)
 
-    def _select_indices(self, model: IEBN, sel_loader: DataLoader, exemplars_per_class: int, transform) -> Iterable:
-        model_device = next(model.parameters()).device  # 整个模型都在一个设备上
+    def _select_indices(self, model: IEBN, sel_loader: DataLoader, per_class: int, transform) -> Iterable:
+        model_device = next(model.parameters()).device
 
-        # 从模型中提取所有训练样本的输出
+        
         extracted_features = []
         extracted_targets = []
         with torch.no_grad():
             model.eval()
             for images, targets in sel_loader:
                 feats = model(images.to(model_device), return_features=True)[1]
-                feats = feats / feats.norm(dim=1).view(-1, 1)  # Feature normalization
+                feats = feats / feats.norm(dim=1).view(-1, 1) 
                 extracted_features.append(feats)
                 extracted_targets.extend(targets)
         extracted_features = (torch.cat(extracted_features)).cpu()
         extracted_targets = np.array(extracted_targets)
         result = []
-
+        
         for curr_cls in np.unique(extracted_targets):
-
+            
             cls_ind = np.where(extracted_targets == curr_cls)[0]
             assert (len(cls_ind) > 0), "No samples to choose from for class {:d}".format(curr_cls)
-            assert (exemplars_per_class <= len(cls_ind)), "Not enough samples to store"
-
-            cls_feats = extracted_features[cls_ind]
-
+            assert (per_class <= len(cls_ind)), "Not enough samples to store"
+        
+            cls_feats = extracted_features[cls_ind]       
             cls_mu = cls_feats.mean(0)
-
+            
             selected = []
             selected_feat = []
-            for k in range(exemplars_per_class):
-
+            for k in range(per_class):
+                
                 sum_others = torch.zeros(cls_feats.shape[1])
                 for j in selected_feat:
                     sum_others += j / (k + 1)
                 dist_min = np.inf
-
+                
                 for item in cls_ind:
                     if item not in selected:
                         feat = extracted_features[item]
@@ -158,7 +117,6 @@ class HerdingExemplarsSelector(data.Dataset):
                 selected.append(newone)
             result.extend(selected)
         return result
-
 
 class Exemplar_rafdb(data.Dataset):
     def __init__(self, raf_path, order, iter, exemplar_num , phase ,transform = None):
