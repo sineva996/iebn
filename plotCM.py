@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-def plotCM(matrix, labels_name, title, savname):
+def plotCM(matrix, labels_names, title, savname):
 
     matrix = matrix / matrix.sum(axis=1)[:, np.newaxis] 
     thresh = matrix.max() / 2
@@ -15,11 +15,11 @@ def plotCM(matrix, labels_name, title, savname):
     plt.title(title) 
     plt.colorbar() 
     
-    num_class = np.array(range(len(labels_name)))
+    num_class = np.array(range(len(labels_names)))
     
 
-    plt.xticks(num_class, labels_name, rotation=90)  
-    plt.yticks(num_class, labels_name) 
+    plt.xticks(num_class, labels_names, rotation=90)  
+    plt.yticks(num_class, labels_names) 
 
     plt.ylabel('Target')
     plt.xlabel('Prediction')
