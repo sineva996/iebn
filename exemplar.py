@@ -29,9 +29,11 @@ class Exemplar:
         self.novel_cls = (len(self.order[itera]))
 
         if itera == 1:
-            self.memory_size = self.memory_size//2
+            size = self.memory_size//2
+            self.memory_size = size
         elif itera == 2:
-            self.memory_size = self.memory_size//4
+            size = self.memory_size//2
+            self.memory_size = size
 
         if itera >0:
             self.train_images = self.train_images[:, :self.memory_size]
