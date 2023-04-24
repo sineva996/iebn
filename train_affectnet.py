@@ -36,10 +36,7 @@ parser.add_argument("--proc", default=[2, 2, 3], type=list, help="stage-wise num
 parser.add_argument("--order", default=[[0,4],[3,6],[1,2,5]], type=list, help="Classes at stage-wise of learning")#不同阶段的学习的类别
 parser.add_argument("--confusion", action="store_true", default=True, help="show confusion matrix")#混淆矩阵
 
-
 args = parser.parse_args()
-
-
 def training():
 
     if torch.cuda.is_available():
