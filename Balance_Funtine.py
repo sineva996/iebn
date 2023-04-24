@@ -7,7 +7,6 @@ from PIL import Image
 
 class Balance_funtine:
     def __init__(self, exemplar_num,total_class,transform = None):
-        
         self.total_class = total_class
         self.memory_size = exemplar_num*(self.total_class)
         self.transform = transform
