@@ -11,7 +11,6 @@ from net.Network import ResNet18_IEBN as IEBN
 import dataset
 import Loss
 import utils_transform as utils
-
 import torch.nn.functional as F
 
 parser = argparse.ArgumentParser()
