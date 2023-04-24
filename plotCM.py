@@ -17,7 +17,6 @@ def plotCM(matrix, labels_names, title, savname):
     
     num_class = np.array(range(len(labels_names)))
     
-
     plt.xticks(num_class, labels_names, rotation=90)  
     plt.yticks(num_class, labels_names) 
 
