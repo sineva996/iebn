@@ -5,7 +5,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 def cross_loss():
-
     loss_temp = torch.nn.CrossEntropyLoss()
     return loss_temp
 
@@ -14,7 +13,6 @@ def kl_loss():
     return loss_temp
 
 def dist_loss(loss_soft,loss_hard,T,alpha):
-
     loss_soft2 = loss_soft *T *T
     loss_temp = (1-alpha)*loss_hard + alpha *loss_soft2
  
