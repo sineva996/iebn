@@ -1,1 +1,1 @@
-add pre-model here
+Download pre-trained model of [MSCeleb](https://drive.google.com/file/d/1H421M8mosIVt8KsEWQ1UuYMkQS8X1prf/view?usp=sharing) and move the file to here
