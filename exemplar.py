@@ -72,9 +72,7 @@ class Herding(data.Dataset):
         super().__init__(exemplars_dataset)
 
     def _select_indices(self, model: IEBN, sel_loader: DataLoader, per_class: int, transform) -> Iterable:
-        model_device = next(model.parameters()).device
-
-        
+        model_device = next(model.parameters()).device     
         extracted_features = []
         extracted_targets = []
         with torch.no_grad():
