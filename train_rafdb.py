@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import torch
 import copy
-
 from sklearn.metrics import balanced_accuracy_score
 from sklearn import metrics
 from net.Network import ResNet18_IEBN as IEBN
@@ -35,12 +34,9 @@ parser.add_argument("--proc", default=[2, 2, 3], type=list, help="stage-wise num
 parser.add_argument("--order", default=[[0,3],[4,6],[1,2,5]], type=list, help="Classes at stage-wise of learning")
 parser.add_argument("--confusion", action="store_true", default=True, help="show confusion matrix")
 
-
 args = parser.parse_args()
 
-
 def training():
-    
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
         torch.backends.cudnn.benchmark = True
