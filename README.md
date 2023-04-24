@@ -30,13 +30,12 @@ wincertstore==0.2
 - Download pre-trained model of [MSCeleb](https://drive.google.com/file/d/1H421M8mosIVt8KsEWQ1UuYMkQS8X1prf/view?usp=sharing) and move the file to `./pre-models`
 - Download [RAF-DB](http://www.whdeng.cn/raf/model1.html) dataset and extract the `raf-basic` dir to `./datasets`
 - Download [AffectNet](http://mohammadmahoor.com/affectnet/) dataset and extract the `AffectNet` dir  to `./datasets` 
-- Convert data of AffectNet to the same format as RAF-DB.
+- Convert data (modify file name) of AffectNet to the same format as RAF-DB.
 for example:
 "0000f8a4575c15055a9ee0a72c9aa5bf9ac00558173565802479a287.jpg"→"train_0000f8a4575c15055a9ee0a72c9aa5bf9ac00558173565802479a287.jpg"
 "ff8e6ab180b28a4b07f6f2c071033745aa852519a851c49407eb6bbb.jpg"→"test_ff8e6ab180b28a4b07f6f2c071033745aa852519a851c49407eb6bbb.jpg"
 
 - We provide the new label file of AffectNet, affectnet_new_label.txt.
-
 
 ## Training
 We provide the training code for AffectNet and RAF-DB.  
