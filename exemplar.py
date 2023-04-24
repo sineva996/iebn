@@ -24,7 +24,6 @@ class Exemplar:
         self.train_images = torch.tensor(self.train_images)
         self.train_label =  torch.tensor(self.train_label)   
         
-    
     def update(self, images_train,labels_train,itera):
         self.novel_cls = (len(self.order[itera]))
 
